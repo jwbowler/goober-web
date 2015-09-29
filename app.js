@@ -22,18 +22,25 @@ socket.on('connection', function(conn) {
     client.on('connect', function() {
         console.log('Connected to Redis');
 
-        client.subscribe('loc_0_p90');
-        // client.subscribe('loc_1_p90');
-        // client.subscribe('loc_2_p90');
-        // client.subscribe('loc_3_p90');
+        client.subscribe('stream');
     });
 
     client.on('message', function (channel, message) {
-        // console.log(channel + ": " + message)
-        conn.write(channel + "," + message)
+        console.log(channel + ": " + message)
+        conn.write(message)
     });
 
-    setInterval(function() { conn.write("Hey"); }, 1000);
+    // var cell = 0;
+
+    // setInterval(function() {
+        // var col = Math.floor(cell/10);
+        // var row = cell % 10;
+
+        // message = "" + (col + 1) + "," + (row + 1) + "," + "HI";
+        // conn.write(message);
+
+        // cell += 1;
+    // }, 1000);
 
 });
 
