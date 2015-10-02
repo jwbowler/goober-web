@@ -2,12 +2,31 @@
 
 <html>
     <head>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
         <script src="http://cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js"></script>
 
         <style>
             body {
                 padding: 50px;
+            }
+            #demo-left {
+                float: left;
+            }
+            #demo-right {
+                float: right;
+                width: 700px;
+                font-size: 20pt;
             }
             table {
                 border-collapse: collapse;
@@ -16,8 +35,8 @@
             td {
                 border: solid thin;
                 border-style: none;
-                height: 1em;
-                width: 1em;
+                height: 8px;
+                width: 8px;
                 text-align: center;
                 color: blue;
                 padding: 0;
@@ -28,12 +47,45 @@
     </head>
 
     <body lang="en">
+        <div class="container-fullwidth">
 
-        <div id="timebox">Empty</div>
+            <!-- Static navbar -->
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Goober</a>
+                    </div>
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li class="active" id="slides-button"><a href="#">Slides</a></li>
+                            <li id="demo-button"><a href="#">Demo</a></li>
+                        </ul>
+                    </div><!--/.nav-collapse -->
+                </div><!--/.container-fluid -->
+            </nav>
 
-        <div id="table-container"></div>
+            <div id="demo" class="hidden">
+
+                <div class="row">
+                    <div id="demo-left">
+                        <table>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <div id="demo-right">
+                        <div id="timebox">Time: unitialized</div>
+                        <div id="detail"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="slides">
+                <iframe src="https://docs.google.com/presentation/d/1aPh0Kly8o5GMENJv2GzZMBDU2JG_h9KboC6CJnhhpCs/embed?start=false&loop=false&delayms=3000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+            </div>
+
+        </div>
 
         <script src="client.js"> </script>
-
     </body>
 </html>

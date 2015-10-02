@@ -1,13 +1,41 @@
 $(document).ready(function () {
-    var tableContainer = $('#table-container')
-    for (var i = 0; i < 50; i++) {
-        tableContainer.append('<tr>');
+    $('#demo-button').on('click', function() {
+        $('#slides-button').removeClass('active');
+        $('#demo-button').addClass('active');
+
+        $('#slides').addClass('hidden');
+        $('#demo').removeClass('hidden');
+    });
+
+    $('#slides-button').on('click', function() {
+        $('#demo-button').removeClass('active');
+        $('#slides-button').addClass('active');
+
+        $('#demo').addClass('hidden');
+        $('#slides').removeClass('hidden');
+    });
+
+    var table = $('tbody');
+    for (var i = 0; i < 100; i++) {
+        table.append('<tr>');
     }
-    tableContainer.children('tr').each(function(j) {
-        var td = $(this)
-        for (var i = 0; i < 50; i++) {
-            td.append('<td>');
+
+    var counter = 0;
+    table.children('tr').each(function(j) {
+        var tr = $(this);
+        for (var i = 0; i < 100; i++) {
+            tr.append('<td class=' + counter + '>');
+            counter += 1;
         }
+    });
+
+    $('td').click(function () {
+        var cell = this.className;
+
+        var content = 'Zone: ' + cell;
+
+        // $.getJSON(
+        $('#detail').text(content)
     });
 });
 
@@ -24,7 +52,7 @@ sockjs.onopen = function() {
 };
 
 sockjs.onmessage = function(e) {
-    console.log(e.data);
+    // console.log(e.data);
 
     var tokens = e.data.split('/');
     var cell = tokens[0];
@@ -47,15 +75,15 @@ sockjs.onmessage = function(e) {
         var lastTimeFormatted = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
     }
 
-    var col = Math.floor(cell/10) + 1;
-    var row = (cell % 10) + 1;
+    var col = Math.floor(cell/100) + 1;
+    var row = (cell % 100) + 1;
 
-    var cell = $('table tr:nth-child(' + col + ') td:nth-child(' + row + ')');
+    var cell = $('tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
 
     // cell.text(avg + '/' + p90);
     cell.css('background-color', 'white')
 
-    $('#timebox').text(lastTimeFormatted)
+    $('#timebox').text('Time: ' + lastTimeFormatted)
 };
 
 sockjs.onclose = function() {

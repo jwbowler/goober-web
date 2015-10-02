@@ -61,7 +61,7 @@ socket.installHandlers(server, {prefix: '/stream'});
     // console.log('App listening at http://%s:%s', host, port);
 // });
 
-server.listen(8080, '0.0.0.0');
+server.listen(80, '0.0.0.0');
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
