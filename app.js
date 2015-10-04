@@ -6,43 +6,68 @@ var redis = require('redis');
 
 // Setup Sockjs
 
-var sockjs_opts = {sockjs_url: 'http://cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js'};
-var socket = sockjs.createServer(sockjs_opts);
+// var sockjs_opts = {sockjs_url: 'http://cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js'};
+// var socket = sockjs.createServer(sockjs_opts);
 
-socket.on('connection', function(conn) {
-    console.log('Connected to Sockjs');
+// socket.on('connection', function(conn) {
+    // console.log('Connected to Sockjs');
 
     // Setup Redis
 
     var redisHost = 'john-redis.2wlafm.ng.0001.usw2.cache.amazonaws.com';
     var redisPort = 6379;
 
-    var client = redis.createClient(redisPort, redisHost);
+    var subClient = redis.createClient(redisPort, redisHost);
+    var getClient = redis.createClient(redisPort, redisHost);
 
-    client.on('connect', function() {
-        console.log('Connected to Redis');
+    var lastTime = null;
+    var currentTime = null;
 
-        client.subscribe('stream');
+    // subClient.on('connect', function() {
+        // console.log('Connected to Redis');
+
+        subClient.subscribe('stream');
+        subClient.subscribe('time');
+    // });
+
+    subClient.on('message', function(channel, message) {
+        if (channel == 'stream') {
+            // var tokens = message.split('/');
+            // var cell = tokens[0];
+            // // var avg = tokens[1];
+            // // var p90 = tokens[2];
+            // // var timestamp = parseInt(tokens[3]);
+
+            // // var batchAvg = 'none';
+            // // if (currentTime) {
+                // // batchAvg = getClient.hget(currentTime, cell);
+            // // }
+
+            // console.log(message);
+            // // conn.write(message + '/' + batchAvg);
+        }
+        else if (channel == 'time') {
+            var time = parseInt(message, 10);
+            lastTime = currentTime
+            currentTime = time
+
+            console.log(lastTime + ', ' + currentTime);
+
+            // getClient.hgetall(message, function(err, reply) {
+                // if (err) {
+                    // console.log(err);
+                    // return;
+                // }
+                // // console.log(reply);
+                // conn.write('BATCH:' + reply)
+            // });
+        }
+        else {
+            console.log('Unknown channel');
+        }
     });
 
-    client.on('message', function (channel, message) {
-        console.log(channel + ": " + message)
-        conn.write(message)
-    });
-
-    // var cell = 0;
-
-    // setInterval(function() {
-        // var col = Math.floor(cell/10);
-        // var row = cell % 10;
-
-        // message = "" + (col + 1) + "," + (row + 1) + "," + "HI";
-        // conn.write(message);
-
-        // cell += 1;
-    // }, 1000);
-
-});
+// });
 
 
 // Setup webserver
@@ -52,17 +77,10 @@ app.use(express.static(__dirname + '/public'));
 
 var server = http.createServer(app)
 
-socket.installHandlers(server, {prefix: '/stream'});
-
-// var server = app.listen(8080, function () {
-    // var host = server.address().address;
-    // var port = server.address().port;
-
-    // console.log('App listening at http://%s:%s', host, port);
-// });
+// socket.installHandlers(server, {prefix: '/stream'});
 
 server.listen(80, '0.0.0.0');
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
