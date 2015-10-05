@@ -32,11 +32,11 @@ var redis = require('redis');
 
     subClient.on('message', function(channel, message) {
         if (channel == 'stream') {
-            // var tokens = message.split('/');
+            var tokens = message.split('/');
             // var cell = tokens[0];
             // // var avg = tokens[1];
             // // var p90 = tokens[2];
-            // // var timestamp = parseInt(tokens[3]);
+            var timestamp = parseInt(tokens[3]);
 
             // // var batchAvg = 'none';
             // // if (currentTime) {
@@ -45,6 +45,8 @@ var redis = require('redis');
 
             // console.log(message);
             // // conn.write(message + '/' + batchAvg);
+
+            console.log(timestamp);
         }
         else if (channel == 'time') {
             var time = parseInt(message, 10);
@@ -80,6 +82,16 @@ var server = http.createServer(app)
 // socket.installHandlers(server, {prefix: '/stream'});
 
 server.listen(80, '0.0.0.0');
+
+app.get('/batch', function(req, res) {
+    getClient.hgetall('current', function(err, reply) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        res.json(reply);
+    });
+});
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');

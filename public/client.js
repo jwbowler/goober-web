@@ -43,7 +43,7 @@ $(document).ready(function () {
         }
     });
 
-    $('td').click(function () {
+    $('td').click(function() {
         var cell = this.className;
 
         var content = 'Zone: ' + cell;
@@ -51,6 +51,12 @@ $(document).ready(function () {
         // $.getJSON(
         $('#detail').text(content)
     });
+
+    setInterval(function() {
+        $.getJSON('/batch', function(data) {
+            console.log(data);
+        });
+    }, 2000);
 });
 
 // var sockjs_url = '/stream';
@@ -65,51 +71,51 @@ var lastTimeFormatted = 'blah'
     // console.log('Connected.');
 // };
 
-sockjs.onmessage = function(e) {
-    // console.log(e.data);
+// sockjs.onmessage = function(e) {
+    // // console.log(e.data);
 
-    var tokens = e.data.split('/');
-    var cell = tokens[0];
-    var avg = tokens[1];
-    var p90 = tokens[2];
-    var timestamp = parseInt(tokens[3]);
-    var batchAvg = tokens[4];
+    // var tokens = e.data.split('/');
+    // var cell = tokens[0];
+    // var avg = tokens[1];
+    // var p90 = tokens[2];
+    // var timestamp = parseInt(tokens[3]);
+    // var batchAvg = tokens[4];
 
-    if (timestamp > lastTime) {
-        lastTime = timestamp
+    // if (timestamp > lastTime) {
+        // lastTime = timestamp
 
-        var date = new Date(lastTime)
+        // var date = new Date(lastTime)
 
-        // hours part from the timestamp
-        var hours = date.getHours();
-        // minutes part from the timestamp
-        var minutes = "0" + date.getMinutes();
-        // seconds part from the timestamp
-        var seconds = "0" + date.getSeconds();
+        // // hours part from the timestamp
+        // var hours = date.getHours();
+        // // minutes part from the timestamp
+        // var minutes = "0" + date.getMinutes();
+        // // seconds part from the timestamp
+        // var seconds = "0" + date.getSeconds();
 
-        var lastTimeFormatted = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-    }
+        // var lastTimeFormatted = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    // }
 
-    var col = Math.floor(cell/100) + 1;
-    var row = (cell % 100) + 1;
+    // var col = Math.floor(cell/100) + 1;
+    // var row = (cell % 100) + 1;
 
 
-    var cell = $('#demo-left tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
-    var otherCell = $('#demo-right tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
+    // var cell = $('#demo-left tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
+    // var otherCell = $('#demo-right tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
 
-    // cell.text(avg + '/' + p90);
-    var leftColor = Math.max(0, Math.min(255, avg));
-    // var rightColor = Math.max(0, Math.min(255, batchAvg));
+    // // cell.text(avg + '/' + p90);
+    // var leftColor = Math.max(0, Math.min(255, avg));
+    // // var rightColor = Math.max(0, Math.min(255, batchAvg));
 
-    // console.log(cell + ' ' + leftColor);
+    // // console.log(cell + ' ' + leftColor);
 
-    cell.css('background-color', 'rgb(' + leftColor + ', ' + leftColor + ', ' + leftColor + ')');
-    // cell.css('background-color', 'rgb(255, 255, 255)');
+    // cell.css('background-color', 'rgb(' + leftColor + ', ' + leftColor + ', ' + leftColor + ')');
+    // // cell.css('background-color', 'rgb(255, 255, 255)');
 
-    // otherCell.css('background-color', 'rgb(' + rightColor + ', ' + rightColor + ', ' + rightColor + ')');
+    // // otherCell.css('background-color', 'rgb(' + rightColor + ', ' + rightColor + ', ' + rightColor + ')');
 
-    // $('#timebox').text('Time: ' + lastTimeFormatted)
-};
+    // // $('#timebox').text('Time: ' + lastTimeFormatted)
+// };
 
 // sockjs.onclose = function() {
     // console.log('Closing connection.');
