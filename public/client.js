@@ -66,6 +66,11 @@ $(document).ready(function () {
         $('#detail').text(content)
     });
 
+    var canvas0 = document.getElementById('main-canvas');
+    var ctxt0 = canvas0.getContext('2d');
+    ctxt0.fillStyle = 'rgb(0, 0, 0)';
+    ctxt0.fillRect(0, 0, 1000, 1000);
+
     var canvas1 = document.getElementById('canvas1');
     var ctxt1 = canvas1.getContext('2d');
     ctxt1.fillStyle = 'rgb(0, 0, 0)';
@@ -77,6 +82,9 @@ $(document).ready(function () {
     ctxt2.fillRect(0, 0, 500, 500);
 
     setInterval(function() {
+        ctxt0.fillStyle = 'rgb(0, 0, 0)';
+        ctxt0.fillRect(0, 0, 1000, 1000);
+
         ctxt1.fillStyle = 'rgb(0, 0, 0)';
         ctxt1.fillRect(0, 0, 500, 500);
 
@@ -90,16 +98,22 @@ $(document).ready(function () {
                 var cellIdx = k;
                 var vals = v.split(',');
                 var count = vals[0];
-                var avg = vals[1];
+                var avg = parseInt(vals[1]);
                 var p90 = vals[2];
 
                 var col = Math.floor(cellIdx/100);
                 var row = (cellIdx % 100);
 
                 var rightColor = Math.max(0, Math.min(255, avg));
+                var rightColorHex = '00' + rightColor.toString(16);
+                rightColorHex = rightColorHex.substr(-2);
 
-                ctxt1.fillStyle = 'rgb(' + rightColor + ', ' + rightColor + ', ' + rightColor + ')';
+                ctxt1.fillStyle = '#' + rightColorHex + rightColorHex + rightColorHex;
                 ctxt1.fillRect(row*5, col*5, 5, 5);
+
+                var style = ctxt0.fillStyle.substr(0, 3) + rightColorHex + ctxt0.fillStyle.substr(5, 7);
+                ctxt0.fillStyle = style;
+                ctxt0.fillRect(row*10, col*10, 10, 10);
             });
         });
 
@@ -108,15 +122,21 @@ $(document).ready(function () {
             console.log(data);
             $.each(data, function(k, v) {
                 var cellIdx = k;
-                var avg = v.split(',')[1];
+                var avg = parseInt(v.split(',')[1]);
 
                 var col = Math.floor(cellIdx/100);
                 var row = (cellIdx % 100);
 
                 var leftColor = Math.max(0, Math.min(255, avg));
+                var leftColorHex = '00' + leftColor.toString(16);
+                leftColorHex = leftColorHex.substr(-2);
 
-                ctxt2.fillStyle = 'rgb(' + leftColor + ', ' + leftColor + ', ' + leftColor + ')';
+                ctxt2.fillStyle = '#' + leftColorHex + leftColorHex + leftColorHex;
                 ctxt2.fillRect(row*5, col*5, 5, 5);
+
+                var style = ctxt0.fillStyle.substr(0, 1) + leftColorHex + ctxt0.fillStyle.substr(3, 7);
+                ctxt0.fillStyle = style;
+                ctxt0.fillRect(row*10, col*10, 10, 10);
             });
         });
     }, 2000);
