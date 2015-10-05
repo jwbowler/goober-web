@@ -52,9 +52,42 @@ $(document).ready(function () {
         $('#detail').text(content)
     });
 
+    var canvas = document.getElementById('canvas');
+    var ctxt = canvas.getContext('2d');
+    ctxt.fillStyle = 'rgb(0, 0, 0)';
+    ctxt.fillRect(0, 0, 500, 500);
+
     setInterval(function() {
-        $.getJSON('/batch', function(data) {
+        $.getJSON('/current', function(data) {
             console.log(data);
+            $.each(data, function(k, v) {
+                var cellIdx = k;
+                var batchAvg = v;
+
+                var col = Math.floor(cellIdx/100);
+                var row = (cellIdx % 100);
+
+                // var cell = $('#demo-left tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
+                // var otherCell = $('#demo-right tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
+
+                // // cell.text(avg + '/' + p90);
+                // // var leftColor = Math.max(0, Math.min(255, avg));
+                var rightColor = Math.max(0, Math.min(255, batchAvg));
+
+                ctxt.fillStyle = 'rgb(' + rightColor + ', ' + rightColor + ', ' + rightColor + ')';
+                // ctxt.fillRect(col, row, 1, 1);
+                ctxt.fillRect(row*5, col*5, 5, 5);
+                // ctxt.fillRect(100, 100, 5, 5);
+                // ctxt.fillRect(200, 300, 5, 5);
+                // ctxt.fillRect(300, 300, 5, 5);
+
+                // // console.log(cell + ' ' + leftColor);
+
+                // // cell.css('background-color', 'rgb(' + leftColor + ', ' + leftColor + ', ' + leftColor + ')');
+                // // cell.css('background-color', 'rgb(255, 255, 255)');
+
+                // otherCell.css('background-color', 'rgb(' + rightColor + ', ' + rightColor + ', ' + rightColor + ')');
+            });
         });
     }, 2000);
 });

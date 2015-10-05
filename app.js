@@ -83,7 +83,7 @@ var server = http.createServer(app)
 
 server.listen(80, '0.0.0.0');
 
-app.get('/batch', function(req, res) {
+app.get('/current', function(req, res) {
     getClient.hgetall('current', function(err, reply) {
         if (err) {
             console.log(err);
