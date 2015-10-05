@@ -57,18 +57,24 @@
                         <ul class="nav navbar-nav">
                             <li class="active" id="slides-button"><a href="#">Slides</a></li>
                             <li id="demo-button"><a href="#">Demo</a></li>
+                            <li id="debug-button"><a href="#">Debug</a></li>
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div><!--/.container-fluid -->
             </nav>
 
             <div id="demo" class="hidden">
+                <canvas id="main-canvas" width="1000" height="1000"></canvas>
+            </div>
+
+            <div id="debug" class="hidden">
 
                 <div class="row">
                     <div id="demo-left">
-                        <table>
-                            <tbody></tbody>
-                        </table>
+                        <canvas id='canvas1' width='500' height='500'></canvas>
+                        <!-- <table> -->
+                            <!-- <tbody></tbody> -->
+                        <!-- </table> -->
                     </div>
 
                     <div id="demo-right">
@@ -79,7 +85,7 @@
                             <!-- <tbody></tbody> -->
                         <!-- </table> -->
 
-                        <canvas id='canvas' width='500' height='500'></canvas>
+                        <canvas id='canvas2' width='500' height='500'></canvas>
                     </div>
                 </div>
             </div>

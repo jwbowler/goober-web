@@ -1,18 +1,32 @@
 $(document).ready(function () {
+    $('#slides-button').on('click', function() {
+        $('#slides-button').addClass('active');
+        $('#demo-button').removeClass('active');
+        $('#debug-button').removeClass('active');
+
+        $('#slides').removeClass('hidden');
+        $('#demo').addClass('hidden');
+        $('#debug').addClass('hidden');
+    });
+
     $('#demo-button').on('click', function() {
         $('#slides-button').removeClass('active');
         $('#demo-button').addClass('active');
+        $('#debug-button').removeClass('active');
 
         $('#slides').addClass('hidden');
         $('#demo').removeClass('hidden');
+        $('#debug').addClass('hidden');
     });
 
-    $('#slides-button').on('click', function() {
+    $('#debug-button').on('click', function() {
+        $('#slides-button').removeClass('active');
         $('#demo-button').removeClass('active');
-        $('#slides-button').addClass('active');
+        $('#debug-button').addClass('active');
 
+        $('#slides').addClass('hidden');
         $('#demo').addClass('hidden');
-        $('#slides').removeClass('hidden');
+        $('#debug').removeClass('hidden');
     });
 
     var table = $('#demo-left tbody');
@@ -52,41 +66,57 @@ $(document).ready(function () {
         $('#detail').text(content)
     });
 
-    var canvas = document.getElementById('canvas');
-    var ctxt = canvas.getContext('2d');
-    ctxt.fillStyle = 'rgb(0, 0, 0)';
-    ctxt.fillRect(0, 0, 500, 500);
+    var canvas1 = document.getElementById('canvas1');
+    var ctxt1 = canvas1.getContext('2d');
+    ctxt1.fillStyle = 'rgb(0, 0, 0)';
+    ctxt1.fillRect(0, 0, 500, 500);
+
+    var canvas2 = document.getElementById('canvas2');
+    var ctxt2 = canvas2.getContext('2d');
+    ctxt2.fillStyle = 'rgb(0, 0, 0)';
+    ctxt2.fillRect(0, 0, 500, 500);
 
     setInterval(function() {
+        ctxt1.fillStyle = 'rgb(0, 0, 0)';
+        ctxt1.fillRect(0, 0, 500, 500);
+
+        ctxt2.fillStyle = 'rgb(0, 0, 0)';
+        ctxt2.fillRect(0, 0, 500, 500);
+
         $.getJSON('/current', function(data) {
+            console.log('current');
             console.log(data);
             $.each(data, function(k, v) {
                 var cellIdx = k;
-                var batchAvg = v;
+                var vals = v.split(',');
+                var count = vals[0];
+                var avg = vals[1];
+                var p90 = vals[2];
 
                 var col = Math.floor(cellIdx/100);
                 var row = (cellIdx % 100);
 
-                // var cell = $('#demo-left tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
-                // var otherCell = $('#demo-right tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
+                var rightColor = Math.max(0, Math.min(255, avg));
 
-                // // cell.text(avg + '/' + p90);
-                // // var leftColor = Math.max(0, Math.min(255, avg));
-                var rightColor = Math.max(0, Math.min(255, batchAvg));
+                ctxt1.fillStyle = 'rgb(' + rightColor + ', ' + rightColor + ', ' + rightColor + ')';
+                ctxt1.fillRect(row*5, col*5, 5, 5);
+            });
+        });
 
-                ctxt.fillStyle = 'rgb(' + rightColor + ', ' + rightColor + ', ' + rightColor + ')';
-                // ctxt.fillRect(col, row, 1, 1);
-                ctxt.fillRect(row*5, col*5, 5, 5);
-                // ctxt.fillRect(100, 100, 5, 5);
-                // ctxt.fillRect(200, 300, 5, 5);
-                // ctxt.fillRect(300, 300, 5, 5);
+        $.getJSON('/compare', function(data) {
+            console.log('compare');
+            console.log(data);
+            $.each(data, function(k, v) {
+                var cellIdx = k;
+                var avg = v.split(',')[1];
 
-                // // console.log(cell + ' ' + leftColor);
+                var col = Math.floor(cellIdx/100);
+                var row = (cellIdx % 100);
 
-                // // cell.css('background-color', 'rgb(' + leftColor + ', ' + leftColor + ', ' + leftColor + ')');
-                // // cell.css('background-color', 'rgb(255, 255, 255)');
+                var leftColor = Math.max(0, Math.min(255, avg));
 
-                // otherCell.css('background-color', 'rgb(' + rightColor + ', ' + rightColor + ', ' + rightColor + ')');
+                ctxt2.fillStyle = 'rgb(' + leftColor + ', ' + leftColor + ', ' + leftColor + ')';
+                ctxt2.fillRect(row*5, col*5, 5, 5);
             });
         });
     }, 2000);
