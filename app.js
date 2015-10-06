@@ -61,7 +61,7 @@ app.get('/compare', function(req, res) {
     if (!lastTime) {
         res.json({});
     } else {
-        getClient.hgetall(lastTime, function(err, reply) {
+        getClient.hgetall('60-' + lastTime, function(err, reply) {
             if (err) {
                 console.log(err);
                 res.json({});
