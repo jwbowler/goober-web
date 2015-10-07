@@ -17,21 +17,10 @@ subClient.subscribe('time');
 
 subClient.on('message', function(channel, message) {
     if (channel == 'time') {
-        // var time = parseInt(message, 10);
         lastTime = currentTime
-        // currentTime = time
         currentTime = message
 
         console.log(lastTime + ', ' + currentTime);
-
-        // getClient.hgetall(message, function(err, reply) {
-        // if (err) {
-        // console.log(err);
-        // return;
-        // }
-        // // console.log(reply);
-        // conn.write('BATCH:' + reply)
-        // });
     }
     else {
         console.log('Unknown channel');
@@ -45,28 +34,51 @@ var server = http.createServer(app);
 
 server.listen(80, '0.0.0.0');
 
-app.get('/current', function(req, res) {
-    getClient.hgetall('current', function(err, reply) {
-        if (err) {
-            console.log(err);
-            res.json({});
-        } else {
-            getClient.del('current');
-            res.json(reply);
-        }
-    });
-});
+// app.get('/current', function(req, res) {
+    // getClient.hgetall('current', function(err, reply) {
+        // if (err) {
+            // console.log(err);
+            // res.json({});
+        // } else {
+            // getClient.del('current');
+            // res.json(reply);
+        // }
+    // });
+// });
 
-app.get('/compare', function(req, res) {
+// app.get('/compare', function(req, res) {
+    // if (!lastTime) {
+        // res.json({});
+    // } else {
+        // getClient.hgetall('60-' + lastTime, function(err, reply) {
+            // if (err) {
+                // console.log(err);
+                // res.json({});
+            // } else {
+                // res.json(reply);
+            // }
+        // });
+    // }
+// });
+
+app.get('/viz_data', function(req, res) {
     if (!lastTime) {
         res.json({});
     } else {
-        getClient.hgetall('60-' + lastTime, function(err, reply) {
+        getClient.hgetall('current', function(err, currentData) {
             if (err) {
                 console.log(err);
                 res.json({});
             } else {
-                res.json(reply);
+                // getClient.del('current');
+                getClient.hgetall('60-' + lastTime, function(err, compareData) {
+                    if (err) {
+                        console.log(err);
+                        res.json({});
+                    } else {
+                        res.json({current: currentData, compare: compareData});
+                    }
+                });
             }
         });
     }

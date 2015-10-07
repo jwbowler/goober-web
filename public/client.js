@@ -57,14 +57,12 @@ $(document).ready(function () {
         }
     });
 
-    $('td').click(function() {
-        var cell = this.className;
+    // $('td').click(function() {
+        // var cell = this.className;
 
-        var content = 'Zone: ' + cell;
-
-        // $.getJSON(
-        $('#detail').text(content)
-    });
+        // var content = 'Zone: ' + cell;
+        // $('#detail').text(content)
+    // });
 
     var canvas0 = document.getElementById('main-canvas');
     var ctxt0 = canvas0.getContext('2d');
@@ -85,124 +83,69 @@ $(document).ready(function () {
     var numRows = 20;
 
     setInterval(function() {
-        ctxt0.fillStyle = 'rgb(0, 0, 0)';
-        ctxt0.fillRect(0, 0, 1000, 1000);
+        // ctxt0.fillStyle = 'rgb(0, 0, 0)';
+        // ctxt0.fillRect(0, 0, 1000, 1000);
 
-        ctxt1.fillStyle = 'rgb(0, 0, 0)';
-        ctxt1.fillRect(0, 0, 500, 500);
+        // ctxt1.fillStyle = 'rgb(0, 0, 0)';
+        // ctxt1.fillRect(0, 0, 500, 500);
 
-        ctxt2.fillStyle = 'rgb(0, 0, 0)';
-        ctxt2.fillRect(0, 0, 500, 500);
+        // ctxt2.fillStyle = 'rgb(0, 0, 0)';
+        // ctxt2.fillRect(0, 0, 500, 500);
 
-        $.getJSON('/current', function(data) {
-            console.log('current');
+        $.getJSON('/viz_data', function(data) {
             console.log(data);
-            $.each(data, function(k, v) {
-                var cellIdx = k;
-                var vals = v.split(',');
-                var count = vals[0];
-                var avg = parseInt(vals[1]);
-                var p90 = vals[2];
 
+            if (data['current'] == null || data['compare'] == null) {
+                return;
+            }
+
+            for (var cellIdx = 0; cellIdx < 20*20; cellIdx++) {
                 var col = Math.floor(cellIdx/numCols);
                 var row = (cellIdx % numRows);
 
-                var rightColor = Math.max(0, Math.min(255, avg));
-                var rightColorHex = '00' + rightColor.toString(16);
-                rightColorHex = rightColorHex.substr(-2);
+                var leftColorHex = '00'
 
-                ctxt1.fillStyle = '#' + rightColorHex + rightColorHex + rightColorHex;
+                if (cellIdx.toString() in data['current']) {
+                    var vals = data['current'][cellIdx.toString()].split(',');
+                    var count = vals[0];
+                    var avg = parseInt(vals[1]);
+                    var p90 = vals[2];
+
+                    var col = Math.floor(cellIdx/numCols);
+                    var row = (cellIdx % numRows);
+
+                    var leftColor = Math.max(0, Math.min(255, avg));
+                    leftColorHex = '00' + leftColor.toString(16);
+                    leftColorHex = leftColorHex.substr(-2);
+                }
+
+                var rightColorHex = '00'
+
+                if (cellIdx.toString() in data['compare']) {
+                    var vals = data['compare'][cellIdx.toString()].split(',');
+                    var count = vals[0];
+                    var avg = parseInt(vals[1]);
+                    var p90 = vals[2];
+
+                    var col = Math.floor(cellIdx/numCols);
+                    var row = (cellIdx % numRows);
+
+                    // If you're reading this, the "/60" is because I made a
+                    // math mistake somewhere and I can't track it down before
+                    // the demo. (Sorry...)
+                    var rightColor = Math.max(0, Math.min(255, avg/60));
+                    rightColorHex = '00' + rightColor.toString(16);
+                    rightColorHex = rightColorHex.substr(-2);
+                }
+
+                ctxt0.fillStyle = '#' + rightColorHex + leftColorHex + '00';
+                ctxt1.fillStyle = '#' + leftColorHex + leftColorHex + leftColorHex;
+                ctxt2.fillStyle = '#' + rightColorHex + rightColorHex + rightColorHex;
+
+                ctxt0.fillRect(row*(1000 / numRows), col*(1000 / numCols), 1000 / numRows, 1000 / numCols);
                 ctxt1.fillRect(row*(500 / numRows), col*(500 / numCols), 500 / numRows, 500 / numCols);
-
-                var style = ctxt0.fillStyle.substr(0, 3) + rightColorHex + ctxt0.fillStyle.substr(5, 7);
-                ctxt0.fillStyle = style;
-                ctxt0.fillRect(row*(1000 / numRows), col*(1000 / numCols), 1000 / numRows, 1000 / numCols);
-            });
-        });
-
-        $.getJSON('/compare', function(data) {
-            console.log('compare');
-            console.log(data);
-            $.each(data, function(k, v) {
-                var cellIdx = k;
-                var avg = parseInt(v.split(',')[1]);
-
-                var col = Math.floor(cellIdx/numCols);
-                var row = (cellIdx % numRows);
-
-                var leftColor = Math.max(0, Math.min(255, avg));
-                var leftColorHex = '00' + leftColor.toString(16);
-                leftColorHex = leftColorHex.substr(-2);
-
-                ctxt2.fillStyle = '#' + leftColorHex + leftColorHex + leftColorHex;
                 ctxt2.fillRect(row*(500 / numRows), col*(500 / numCols), 500 / numRows, 500 / numCols);
-
-                var style = ctxt0.fillStyle.substr(0, 1) + leftColorHex + ctxt0.fillStyle.substr(3, 7);
-                ctxt0.fillStyle = style;
-                ctxt0.fillRect(row*(1000 / numRows), col*(1000 / numCols), 1000 / numRows, 1000 / numCols);
-            });
+            }
         });
-    }, 2000);
+    }, 1000);
 });
-
-// var sockjs_url = '/stream';
-
-// var sockjs = new SockJS(sockjs_url);
-// var userid = 'guest' + new Date().getSeconds();
-
-var lastTime = 0;
-var lastTimeFormatted = 'blah'
-
-// sockjs.onopen = function() {
-    // console.log('Connected.');
-// };
-
-// sockjs.onmessage = function(e) {
-    // // console.log(e.data);
-
-    // var tokens = e.data.split('/');
-    // var cell = tokens[0];
-    // var avg = tokens[1];
-    // var p90 = tokens[2];
-    // var timestamp = parseInt(tokens[3]);
-    // var batchAvg = tokens[4];
-
-    // if (timestamp > lastTime) {
-        // lastTime = timestamp
-
-        // var date = new Date(lastTime)
-
-        // // hours part from the timestamp
-        // var hours = date.getHours();
-        // // minutes part from the timestamp
-        // var minutes = "0" + date.getMinutes();
-        // // seconds part from the timestamp
-        // var seconds = "0" + date.getSeconds();
-
-        // var lastTimeFormatted = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-    // }
-
-    // var col = Math.floor(cell/100) + 1;
-    // var row = (cell % 100) + 1;
-
-
-    // var cell = $('#demo-left tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
-    // var otherCell = $('#demo-right tbody tr:nth-child(' + col + ') td:nth-child(' + row + ')');
-
-    // // cell.text(avg + '/' + p90);
-    // var leftColor = Math.max(0, Math.min(255, avg));
-    // // var rightColor = Math.max(0, Math.min(255, batchAvg));
-
-    // // console.log(cell + ' ' + leftColor);
-
-    // cell.css('background-color', 'rgb(' + leftColor + ', ' + leftColor + ', ' + leftColor + ')');
-    // // cell.css('background-color', 'rgb(255, 255, 255)');
-
-    // // otherCell.css('background-color', 'rgb(' + rightColor + ', ' + rightColor + ', ' + rightColor + ')');
-
-    // // $('#timebox').text('Time: ' + lastTimeFormatted)
-// };
-
-// sockjs.onclose = function() {
-    // console.log('Closing connection.');
-// };
